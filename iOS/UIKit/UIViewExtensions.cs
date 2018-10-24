@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Foundation;
 
 namespace UIKit
 {
@@ -30,6 +33,11 @@ namespace UIKit
             var frame = view.Frame;
             frame.Height = height;
             view.Frame = frame;
-        } 
+        }
+
+        public static IEnumerable<NSIndexPath> ToNSIndexPaths(this IEnumerable<int> @this, int section = 0)
+        {
+            return @this.Select(x => NSIndexPath.FromRowSection(x, section));
+        }
     }
 }

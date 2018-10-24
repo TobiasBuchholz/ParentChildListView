@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentChildListView.UI.Droi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentChildListView.UI.iOS", "iOS\ParentChildListView.UI.iOS.csproj", "{2BCF37F9-EE8B-4D2D-9E64-90D133C13EA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParentChildListView.UnitTests", "ParentChildListView.UnitTests\ParentChildListView.UnitTests.csproj", "{233D7EBE-3860-4D01-9821-BCC2015286C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,5 +55,17 @@ Global
 		{2BCF37F9-EE8B-4D2D-9E64-90D133C13EA4}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{2BCF37F9-EE8B-4D2D-9E64-90D133C13EA4}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{2BCF37F9-EE8B-4D2D-9E64-90D133C13EA4}.Debug|iPhone.Build.0 = Debug|iPhone
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|iPhone.Build.0 = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{233D7EBE-3860-4D01-9821-BCC2015286C8}.Debug|iPhone.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -29,6 +29,7 @@
   <ItemGroup>
     <Compile Include="Category.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DiffResult.cs" />
     <Compile Include="TreeNodes\ITreeNodeData.cs" />
     <Compile Include="TreeNodes\TreeNode.cs" />
     <Compile Include="TreeNodes\TreeNodeExtensions.cs" />
