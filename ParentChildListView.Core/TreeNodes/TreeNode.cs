@@ -76,7 +76,7 @@ namespace ParentChildListView.UI.TreeNodes
         public T Data { get; }
         public long Id => Data.Id;
         public long ParentId => Data.ParentId;
-        public IReadOnlyList<TreeNode<T>> ChildNodes => _childNodes; //.AsReadOnly();
-        public IReadOnlyList<TreeNode<T>> ParentNodes => _parentNodes; //.AsReadOnly();
+        public IReadOnlyList<TreeNode<T>> ChildNodes => _childNodes.AsReadOnly();
+        public IReadOnlyList<TreeNode<T>> ParentNodes => _parentNodes.AsReadOnly();
     }
 }

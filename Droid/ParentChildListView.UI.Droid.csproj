@@ -44,12 +44,6 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ParentChildListView.UI\ParentChildListView.UI.csproj">
-      <Project>{114E4510-40CB-4FB6-AFF8-9F495B84439A}</Project>
-      <Name>ParentChildListView.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ParentChildListView.UI\ParentChildListView.UI.csproj" />
+    <ProjectReference Include="..\ParentChildListView.Core\ParentChildListView.Core.csproj" />
   </ItemGroup>
 
 </Project>

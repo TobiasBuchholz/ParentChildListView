@@ -84,12 +84,6 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ParentChildListView.UI\ParentChildListView.UI.csproj">
-      <Project>{114E4510-40CB-4FB6-AFF8-9F495B84439A}</Project>
-      <Name>ParentChildListView.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Contents.json" />
   </ItemGroup>
@@ -121,6 +115,12 @@
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ParentChildListView.Core\ParentChildListView.Core.csproj">
+      <Project>{3B6190CA-15D6-451E-B7D0-9A8D0FBCBCCE}</Project>
+      <Name>ParentChildListView.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
