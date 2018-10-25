@@ -31,7 +31,7 @@ namespace ParentChildListView.UI
             yield return new Category(0, 5, "Autos");
             yield return new Category(0, 6, "Wissen");
             yield return new Category(0, 7, "Sonstiges");
-            yield return new Category(0, 8, "Dummy");
+            yield return new Category(0, 8, "Test Dummy");
             yield return new Category(1, 9, "Android Development");
             yield return new Category(1, 10, "iOS Development");
             yield return new Category(2, 11, "Vegetarisch");
@@ -40,6 +40,9 @@ namespace ParentChildListView.UI
             yield return new Category(3, 14, "Formel 1");
             yield return new Category(5, 15, "AutoBild");
             yield return new Category(13, 16, "Kicker");
+            yield return new Category(16, 17, "Sub-Kicker 1");
+            yield return new Category(16, 18, "Sub-Kicker 2");
+            yield return new Category(16, 19, "Sub-Kicker 3");
         }
     }
 }

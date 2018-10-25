@@ -27,6 +27,7 @@ namespace ParentChildListView.UnitTests
             yield return new Category(3, 14, "Formel 1");
             yield return new Category(5, 15, "AutoBild");
             yield return new Category(13, 16, "Kicker");
+            yield return new Category(16, 17, "Sub-Kicker");
         }
         
         [Theory]
@@ -96,7 +97,7 @@ namespace ParentChildListView.UnitTests
             var thirdLevelNode = secondLevelNode.ChildNodes[0];
 
             var diff = thirdLevelNode.CalculateDiff(rootNode);
-            Assert.Equal(new[] { 1, 2, 3 }, diff.RemovedIndexes);
+            Assert.Equal(new[] { 1, 2, 3, 4 }, diff.RemovedIndexes);
             Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
         }
 
@@ -109,9 +110,8 @@ namespace ParentChildListView.UnitTests
             var thirdLevelNode = secondLevelNode.ChildNodes[0];
 
             var diff = thirdLevelNode.CalculateDiff(firstLevelNode);
-            throw new NotImplementedException();
-            Assert.Equal(new[] { 1, 2, 3 }, diff.RemovedIndexes);
-            Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 2, 3, 4 }, diff.RemovedIndexes);
+            Assert.Equal(new[] { 2, 3 }, diff.AddedIndexes);
         }
     }
 }

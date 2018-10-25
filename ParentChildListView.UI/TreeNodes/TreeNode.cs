@@ -29,31 +29,45 @@ namespace ParentChildListView.UI.TreeNodes
         {
             var levelDelta = ParentNodes.Count - other.ParentNodes.Count;
             if(levelDelta > 1) {
-                var removedIndexes = Enumerable.Range(1, ParentNodes.Count + ChildNodes.Count);
-                var addedIndexes = Enumerable.Range(1, other.ChildNodes.Count);
-                return new DiffResult(addedIndexes, removedIndexes);
+                return CalculateMoreLevelsDiff(other);
             } else if(levelDelta == 1) {
-                var diff = other.CalculateDiff(this);
-                return new DiffResult(diff.RemovedIndexes, diff.AddedIndexes);
+                return CalculateOneLevelDiffReversed(other);
             } else {
-                return new DiffResult(CalculateAddedIndexes(other), CalculateRemovedIndexes(other));
+                return CalculateOneLevelDiff(other);
             }
         }
 
-        private static IEnumerable<int> CalculateAddedIndexes(TreeNode<T> other)
+        private DiffResult CalculateMoreLevelsDiff(TreeNode<T> other)
         {
-            return Enumerable.Range(other.ParentNodes.Count + 1, other.ChildNodes.Count);
+            var removedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, CountParentsInBetween(other) + ChildNodes.Count + 1);
+            var addedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, other.ChildNodes.Count);
+            return new DiffResult(addedIndexes, removedIndexes);
         }
 
-        private IEnumerable<int> CalculateRemovedIndexes(TreeNode<T> other)
+        private int CountParentsInBetween(TreeNode<T> other)
+        {
+            return ParentNodes
+                .Except(other.ParentNodes)
+                .Count(x => x.Id != other.Id);
+        }
+
+        private DiffResult CalculateOneLevelDiffReversed(TreeNode<T> other)
+        {
+            var diff = other.CalculateOneLevelDiff(this);
+            return new DiffResult(diff.RemovedIndexes, diff.AddedIndexes);
+        }
+
+        private DiffResult CalculateOneLevelDiff(TreeNode<T> other)
         {
             var index = _childNodes.FindIndex(0, x => x.Id == other.Id);
-            return Enumerable
+            var addedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, other.ChildNodes.Count);
+            var removedIndexes = Enumerable
                 .Range(0, index)
                 .Select(x => x + other.ParentNodes.Count)
                 .Concat(Enumerable.Range(index + _parentNodes.Count + 2, _childNodes.Count - index - 1));
+            return new DiffResult(addedIndexes, removedIndexes);
         }
-
+        
         public override string ToString()
         {
             return $"[TreeNode: Id={Id} | ParentId={ParentId} | Data={Data}]";
