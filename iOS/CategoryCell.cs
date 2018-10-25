@@ -1,3 +1,4 @@
+using System;
 using CoreGraphics;
 using Foundation;
 using UIKit;
@@ -9,7 +10,6 @@ namespace ParentChildListView.UI.iOS
         public const string CellIdentifier = nameof(CategoryCell);
 
         private UILabel _label;
-        private bool _isSelected;
         
         [Export("initWithFrame:")]
         public CategoryCell(CGRect frame) 
@@ -45,28 +45,28 @@ namespace ParentChildListView.UI.iOS
             divider.HeightAnchor.ConstraintEqualTo(1).Active = true;
         }
 
-        public void SetupRootCell(Category category)
+        public void SetupCell(Category category)
         {
-            BackgroundView.BackgroundColor = UIColor.Purple;
-            _label.Text = $"{category.Name} (Root)";
-        }
-
-        public void SetupParentCell(Category category)
-        {
-            BackgroundView.BackgroundColor = UIColor.Purple;
             _label.Text = category.Name;
         }
 
-        public void SetupSelectedCell(Category category)
-        {
-            BackgroundView.BackgroundColor = UIColor.Red;
-            _label.Text = category.Name;
+        public ParentChildItemState State {
+            set => BackgroundView.BackgroundColor = GetColorForState(value);
         }
-        
-        public void SetupChildCell(Category category)
+
+        private UIColor GetColorForState(ParentChildItemState state)
         {
-            BackgroundView.BackgroundColor = UIColor.Orange;
-            _label.Text = category.Name;
+            switch(state) {
+                case ParentChildItemState.Root:
+                    return BackgroundView.BackgroundColor = UIColor.Blue;
+                case ParentChildItemState.Parent:
+                    return BackgroundView.BackgroundColor = UIColor.Purple;
+                case ParentChildItemState.Child:
+                    return BackgroundView.BackgroundColor = UIColor.Orange;
+                case ParentChildItemState.Selected:
+                    return BackgroundView.BackgroundColor = UIColor.Red;
+            }
+            throw new ArgumentException($"Can't get color for unknown state {state}");
         }
     }
 }

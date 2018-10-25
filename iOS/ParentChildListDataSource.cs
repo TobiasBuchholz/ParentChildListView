@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreGraphics;
 using Foundation;
 using ParentChildListView.UI.TreeNodes;
-using PressMatrix.Utility.TreeNodes;
 using UIKit;
 
 namespace ParentChildListView.UI.iOS
@@ -14,6 +12,7 @@ namespace ParentChildListView.UI.iOS
     {
         private TreeNode<Category> _currentNode;
         private int _itemsCount;
+        private CategoryCell _selectedCell;
         
         public override nint GetItemsCount(UICollectionView collectionView, nint section)
         {
@@ -28,49 +27,82 @@ namespace ParentChildListView.UI.iOS
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var cell = (CategoryCell) collectionView.DequeueReusableCell(CategoryCell.CellIdentifier, indexPath);
-            var parentNodes = CurrentNode.ParentNodes;
-            var parentNodesCount = parentNodes.Count;
-            var index = indexPath.Row;
-
-            if(index == 0) {
-                cell.SetupRootCell(parentNodes.Any() ? parentNodes.First().Data : CurrentNode.Data);
-            } else if(index == parentNodesCount) {
-                cell.SetupSelectedCell(CurrentNode.Data);
-            } else if(index < parentNodesCount) {
-                cell.SetupParentCell(parentNodes[index].Data);
-            } else {
-                cell.SetupChildCell(CurrentNode.ChildNodes[index - (parentNodesCount + 1)].Data);
-            }
+            var state = GetStateForIndex(indexPath.Row);
+            var data = GetDataForIndex(indexPath.Row, state);
+            cell.SetupCell(data);
+            cell.State = state;
             return cell;
+        }
+
+        private ParentChildItemState GetStateForIndex(int index)
+        {
+            if(index == 0) {
+                return ParentChildItemState.Root;
+            } else if(index < _currentNode.ParentNodes.Count) {
+                return ParentChildItemState.Parent;
+            } else {
+                return ParentChildItemState.Child;
+            }
+        }
+        
+        private Category GetDataForIndex(int index, ParentChildItemState state)
+        {
+            switch(state) {
+                case ParentChildItemState.Root:
+                    return _currentNode.ParentNodes.Any() ? _currentNode.ParentNodes.First().Data : _currentNode.Data;
+                case ParentChildItemState.Parent:
+                    return _currentNode.ParentNodes[index].Data;
+                case ParentChildItemState.Child:
+                    return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
+            }
+            throw new ArgumentException($"Couldn't get data for index {index}");
         }
 
         public void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            var cell = (CategoryCell) collectionView.CellForItem(indexPath);
-            var parentNodes = CurrentNode.ParentNodes;
+            var parentNodes = _currentNode.ParentNodes;
             var parentNodesCount = parentNodes.Count;
             var index = indexPath.Row;
 
             if(index == 0) {
-                var previousNode = CurrentNode;
-                CurrentNode = CurrentNode.ParentNodes.First();
-                AnimateSelectionAsync(collectionView, previousNode.CalculateDiff(CurrentNode));
+                SetCurrentNodeWithAnimation(collectionView, indexPath, _currentNode.ParentNodes.First());
             } else if(index < parentNodesCount) {
-                var previousNode = CurrentNode;
-                CurrentNode = parentNodes[index];
-                AnimateSelectionAsync(collectionView, previousNode.CalculateDiff(CurrentNode));
+                SetCurrentNodeWithAnimation(collectionView, indexPath, parentNodes[index]);
             } else if(index > parentNodesCount) {
-                var previousNode = CurrentNode;
-                CurrentNode = CurrentNode.ChildNodes[index - (parentNodesCount + 1)];
-                AnimateSelectionAsync(collectionView, previousNode.CalculateDiff(CurrentNode));
-            }
-
-            if(index > 0) {
-                cell.SetupSelectedCell(CurrentNode.Data);
+                SetCurrentNodeWithAnimation(collectionView, indexPath, _currentNode.ChildNodes[index - (parentNodesCount + 1)]);
             }
         }
 
-        private async Task AnimateSelectionAsync(UICollectionView collectionView, DiffResult diffResult)
+        private void SetCurrentNodeWithAnimation(UICollectionView collectionView, NSIndexPath indexPath, TreeNode<Category> selectedNode)
+        {
+            var previousState = GetStateForPreviousNode(_currentNode, selectedNode);
+            var diffResult = _currentNode.CalculateDiff(selectedNode);
+            
+            _currentNode = selectedNode;
+
+            HandleCellSelectionState(collectionView, indexPath, previousState);
+            AnimateDiffAsync(collectionView, diffResult).Ignore();
+        }
+
+        private static ParentChildItemState GetStateForPreviousNode(TreeNode<Category> previousNode, TreeNode<Category> currentNode)
+        {
+            if(previousNode.ParentNodes.Any()) {
+                return currentNode.ChildNodes.Contains(previousNode) ? ParentChildItemState.Child : ParentChildItemState.Parent;
+            } else {
+                return ParentChildItemState.Root;
+            }
+        }
+
+        private void HandleCellSelectionState(UICollectionView collectionView, NSIndexPath indexPath, ParentChildItemState previousState)
+        {
+            if(_selectedCell != null) {
+                _selectedCell.State = previousState;
+            }
+            _selectedCell = (CategoryCell) collectionView.CellForItem(indexPath);
+            _selectedCell.State = indexPath.Row == 0 ? ParentChildItemState.Root : ParentChildItemState.Selected;
+        }
+
+        private async Task AnimateDiffAsync(UICollectionView collectionView, DiffResult diffResult)
         {
             await DeleteItemsAsync(collectionView, diffResult.RemovedIndexes.ToArray());
             await InsertItemsAsync(collectionView, diffResult.AddedIndexes.ToArray());
@@ -93,12 +125,9 @@ namespace ParentChildListView.UI.iOS
         }
 
         public TreeNode<Category> CurrentNode {
-            private get => _currentNode;
             set {
-                if(_currentNode == null) {
-                    _itemsCount = value.ChildNodes.Count + value.ParentNodes.Count + 1;
-                }
                 _currentNode = value;
+                _itemsCount = value.ParentNodes.Count + value.ChildNodes.Count + 1;
             }
         }
     }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace ParentChildListView.UI
 {
-    public class DiffResult
+    public sealed class DiffResult
     {
         public DiffResult(IEnumerable<int> addedIndexes = null, IEnumerable<int> removedIndexes = null)
         {
