@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ParentChildListView.Core.TreeNodes;
 using ParentChildListView.UI;
 using PressMatrix.Utility.TreeNodes;
 using Xunit;
@@ -44,6 +45,7 @@ namespace ParentChildListView.UnitTests
             var diff = rootNode.CalculateDiff(firstLevelNode);
             Assert.Equal(expectedRemovedIndexes, diff.RemovedIndexes);           
             Assert.Equal(expectedAddedIndexes, diff.AddedIndexes);           
+            Assert.Equal(new[] { 0, selectedNodeIndex + 1 }, diff.MovingIndexes);
         }
 
         [Theory]
@@ -58,6 +60,7 @@ namespace ParentChildListView.UnitTests
             var diff = firstLevelNode.CalculateDiff(secondLevelNode);
             Assert.Equal(expectedRemovedIndexes, diff.RemovedIndexes);
             Assert.Equal(expectedAddedIndexes, diff.AddedIndexes);
+            Assert.Equal(new[] { 0, 1, selectedNodeIndex + 2 }, diff.MovingIndexes);
         }
 
         [Theory]
@@ -74,6 +77,7 @@ namespace ParentChildListView.UnitTests
             var diff = firstLevelNode.CalculateDiff(rootNode);
             Assert.Equal(expectedRemovedIndexes, diff.RemovedIndexes);           
             Assert.Equal(expectedAddedIndexes, diff.AddedIndexes);           
+            Assert.Equal(new[] { 0, 1 }, diff.MovingIndexes);
         }
 
         [Fact]
@@ -84,8 +88,9 @@ namespace ParentChildListView.UnitTests
             var secondLevelNode = firstLevelNode.ChildNodes[0];
 
             var diff = secondLevelNode.CalculateDiff(rootNode);
-            Assert.Equal(new[] { 1, 2, 3 }, diff.RemovedIndexes);
-            Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 2, 3 }, diff.RemovedIndexes);
+            Assert.Equal(new[] { 1, 2, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 0, 1 }, diff.MovingIndexes);
         }
 
         [Fact]
@@ -97,8 +102,9 @@ namespace ParentChildListView.UnitTests
             var thirdLevelNode = secondLevelNode.ChildNodes[0];
 
             var diff = thirdLevelNode.CalculateDiff(rootNode);
-            Assert.Equal(new[] { 1, 2, 3, 4 }, diff.RemovedIndexes);
-            Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 2, 3, 4 }, diff.RemovedIndexes);
+            Assert.Equal(new[] { 1, 2, 4, 5, 6, 7, 8 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 0, 1 }, diff.MovingIndexes);
         }
 
         [Fact]
@@ -110,8 +116,9 @@ namespace ParentChildListView.UnitTests
             var thirdLevelNode = secondLevelNode.ChildNodes[0];
 
             var diff = thirdLevelNode.CalculateDiff(firstLevelNode);
-            Assert.Equal(new[] { 2, 3, 4 }, diff.RemovedIndexes);
-            Assert.Equal(new[] { 2, 3 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 3, 4 }, diff.RemovedIndexes);
+            Assert.Equal(new[] { 3 }, diff.AddedIndexes);
+            Assert.Equal(new[] { 0, 1, 2 }, diff.MovingIndexes);
         }
     }
 }

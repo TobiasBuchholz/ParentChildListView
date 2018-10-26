@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using ParentChildListView.UI.TreeNodes;
+using PressMatrix.Utility.TreeNodes;
 
-namespace PressMatrix.Utility.TreeNodes
+namespace ParentChildListView.Core.TreeNodes
 {
     public static class TreeNodeExtensions
     {

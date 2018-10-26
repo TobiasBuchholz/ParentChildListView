@@ -12,7 +12,6 @@ namespace ParentChildListView.UI.iOS
     {
         private TreeNode<Category> _currentNode;
         private int _itemsCount;
-        private CategoryCell _selectedCell;
         
         public override nint GetItemsCount(UICollectionView collectionView, nint section)
         {
@@ -75,12 +74,18 @@ namespace ParentChildListView.UI.iOS
 
         private void SetCurrentNodeWithAnimation(UICollectionView collectionView, NSIndexPath indexPath, TreeNode<Category> selectedNode)
         {
-            var previousState = GetStateForPreviousNode(_currentNode, selectedNode);
             var diffResult = _currentNode.CalculateDiff(selectedNode);
+            var previousNodeFlattened = _currentNode.Flatten().ToList();
+            var movingIndexes = diffResult.MovingIndexes.ToList();
+            
+            foreach(var i in movingIndexes) {
+                var previousNode = previousNodeFlattened[i];
+                var state = GetStateForPreviousNode(previousNode, selectedNode);
+                var cell = (CategoryCell) collectionView.CellForItem(NSIndexPath.FromRowSection(i, 0));
+                cell.State = i == indexPath.Row && i > 0 ? ParentChildItemState.Selected : state;
+            }
             
             _currentNode = selectedNode;
-
-            HandleCellSelectionState(collectionView, indexPath, previousState);
             AnimateDiffAsync(collectionView, diffResult).Ignore();
         }
 
@@ -93,34 +98,25 @@ namespace ParentChildListView.UI.iOS
             }
         }
 
-        private void HandleCellSelectionState(UICollectionView collectionView, NSIndexPath indexPath, ParentChildItemState previousState)
-        {
-            if(_selectedCell != null) {
-                _selectedCell.State = previousState;
-            }
-            _selectedCell = (CategoryCell) collectionView.CellForItem(indexPath);
-            _selectedCell.State = indexPath.Row == 0 ? ParentChildItemState.Root : ParentChildItemState.Selected;
-        }
-
         private async Task AnimateDiffAsync(UICollectionView collectionView, DiffResult diffResult)
         {
             await DeleteItemsAsync(collectionView, diffResult.RemovedIndexes.ToArray());
             await InsertItemsAsync(collectionView, diffResult.AddedIndexes.ToArray());
         }
 
-        private async Task DeleteItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> removedIndexes)
+        private async Task DeleteItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> indexes)
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
-                _itemsCount -= removedIndexes.Count;
-                collectionView.DeleteItems(removedIndexes.ToNSIndexPaths().ToArray());
+                _itemsCount -= indexes.Count;
+                collectionView.DeleteItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
         
-        private async Task InsertItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> addedIndexes)
+        private async Task InsertItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> indexes)
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
-                _itemsCount += addedIndexes.Count;
-                collectionView.InsertItems(addedIndexes.ToNSIndexPaths().ToArray());
+                _itemsCount += indexes.Count;
+                collectionView.InsertItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
 

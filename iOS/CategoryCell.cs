@@ -58,13 +58,13 @@ namespace ParentChildListView.UI.iOS
         {
             switch(state) {
                 case ParentChildItemState.Root:
-                    return BackgroundView.BackgroundColor = UIColor.Blue;
+                    return UIColor.Blue;
                 case ParentChildItemState.Parent:
-                    return BackgroundView.BackgroundColor = UIColor.Purple;
+                    return UIColor.Purple;
                 case ParentChildItemState.Child:
-                    return BackgroundView.BackgroundColor = UIColor.Orange;
+                    return UIColor.Orange;
                 case ParentChildItemState.Selected:
-                    return BackgroundView.BackgroundColor = UIColor.Red;
+                    return UIColor.Red;
             }
             throw new ArgumentException($"Can't get color for unknown state {state}");
         }

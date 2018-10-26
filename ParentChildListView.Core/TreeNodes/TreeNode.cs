@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ParentChildListView.Core.TreeNodes;
 using PressMatrix.Utility.TreeNodes;
 
 namespace ParentChildListView.UI.TreeNodes
@@ -27,45 +29,25 @@ namespace ParentChildListView.UI.TreeNodes
 
         public DiffResult CalculateDiff(TreeNode<T> other)
         {
-            var levelDelta = ParentNodes.Count - other.ParentNodes.Count;
-            if(levelDelta > 1) {
-                return CalculateMoreLevelsDiff(other);
-            } else if(levelDelta == 1) {
-                return CalculateOneLevelDiffReversed(other);
-            } else {
-                return CalculateOneLevelDiff(other);
-            }
-        }
+            var flattenedNodes = Flatten().ToList();
+            var otherFlattenedNodes = other.Flatten().ToList();
 
-        private DiffResult CalculateMoreLevelsDiff(TreeNode<T> other)
-        {
-            var removedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, CountParentsInBetween(other) + ChildNodes.Count + 1);
-            var addedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, other.ChildNodes.Count);
-            return new DiffResult(addedIndexes, removedIndexes);
-        }
+            var removedNodes = flattenedNodes.Except(otherFlattenedNodes).ToList();
+            var addedNodes = otherFlattenedNodes.Except(flattenedNodes);
+            var movingNodes = flattenedNodes.Except(removedNodes);
 
-        private int CountParentsInBetween(TreeNode<T> other)
-        {
-            return ParentNodes
-                .Except(other.ParentNodes)
-                .Count(x => x.Id != other.Id);
-        }
+            var removedIndexes = removedNodes.Select(x => flattenedNodes.FindIndex(0, y => x.Id == y.Id));
+            var addedIndexes = addedNodes.Select(x => otherFlattenedNodes.FindIndex(0, y => x.Id == y.Id));
+            var movingIndexes = movingNodes.Select(x => flattenedNodes.FindIndex(0, y => x.Id == y.Id));
 
-        private DiffResult CalculateOneLevelDiffReversed(TreeNode<T> other)
-        {
-            var diff = other.CalculateOneLevelDiff(this);
-            return new DiffResult(diff.RemovedIndexes, diff.AddedIndexes);
+            return new DiffResult(addedIndexes, removedIndexes, movingIndexes);
         }
-
-        private DiffResult CalculateOneLevelDiff(TreeNode<T> other)
+        
+        public IEnumerable<TreeNode<T>> Flatten()
         {
-            var index = _childNodes.FindIndex(0, x => x.Id == other.Id);
-            var addedIndexes = Enumerable.Range(other.ParentNodes.Count + 1, other.ChildNodes.Count);
-            var removedIndexes = Enumerable
-                .Range(0, index)
-                .Select(x => x + other.ParentNodes.Count)
-                .Concat(Enumerable.Range(index + _parentNodes.Count + 2, _childNodes.Count - index - 1));
-            return new DiffResult(addedIndexes, removedIndexes);
+            return _parentNodes
+                .Concat(new[] { this })
+                .Concat(ChildNodes);
         }
         
         public override string ToString()
