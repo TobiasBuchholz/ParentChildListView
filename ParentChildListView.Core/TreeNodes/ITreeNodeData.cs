@@ -1,4 +1,4 @@
-namespace PressMatrix.Utility.TreeNodes
+namespace ParentChildListView.Core.TreeNodes
 {
     public interface ITreeNodeData
     {

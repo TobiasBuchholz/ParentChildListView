@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
-using ParentChildListView.UI.TreeNodes;
+using ParentChildListView.Core;
+using ParentChildListView.Core.TreeNodes;
 using UIKit;
 
 namespace ParentChildListView.UI.iOS

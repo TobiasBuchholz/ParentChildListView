@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ParentChildListView.UI
+namespace ParentChildListView.Core
 {
     public sealed class DiffResult
     {

@@ -1,4 +1,4 @@
-namespace ParentChildListView.UI
+namespace ParentChildListView.Core
 {
     public enum ParentChildItemState
     {

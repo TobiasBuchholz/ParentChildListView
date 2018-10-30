@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Android.Animation;
 using Android.Support.V7.Widget;
+using ParentChildListView.Core;
 using Object = Java.Lang.Object;
 
 namespace ParentChildListView.UI.Droid

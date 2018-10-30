@@ -8,7 +8,8 @@ using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using ParentChildListView.UI.TreeNodes;
+using ParentChildListView.Core;
+using ParentChildListView.Core.TreeNodes;
 
 namespace ParentChildListView.UI.Droid
 {

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
+using ParentChildListView.Core;
 using ParentChildListView.Core.TreeNodes;
-using ParentChildListView.UI;
-using PressMatrix.Utility.TreeNodes;
 using Xunit;
 
 namespace ParentChildListView.UnitTests

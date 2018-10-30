@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
+using ParentChildListView.Core;
 using ParentChildListView.Core.TreeNodes;
 
 namespace ParentChildListView.UI.Droid

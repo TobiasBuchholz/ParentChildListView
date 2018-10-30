@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using PressMatrix.Utility.TreeNodes;
+using ParentChildListView.Core.TreeNodes;
 
-namespace ParentChildListView.UI
+namespace ParentChildListView.Core
 {
     public sealed class Category : ITreeNodeData
     {
