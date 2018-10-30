@@ -5,9 +5,9 @@ namespace ParentChildListView.UI
     public sealed class DiffResult
     {
         public DiffResult(
-            IEnumerable<int> addedIndexes = null, 
-            IEnumerable<int> removedIndexes = null,
-            IEnumerable<int> movingIndexes = null)
+            IEnumerable<int> addedIndexes, 
+            IEnumerable<int> removedIndexes,
+            IEnumerable<int> movingIndexes)
         {
             AddedIndexes = addedIndexes;
             RemovedIndexes = removedIndexes;

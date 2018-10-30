@@ -1,26 +1,28 @@
 ﻿using Android.App;
-using Android.Widget;
+using Android.Content;
 using Android.OS;
+using Android.Support.V7.Widget;
+using ParentChildListView.Core.TreeNodes;
 
 namespace ParentChildListView.UI.Droid
 {
     [Activity(Label = "ParentChildListView", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : Activity
     {
-        int count = 1;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.main);
 
-            // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
-
-            // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.myButton);
-
-            button.Click += delegate { button.Text = $"{count++} clicks!"; };
+            var recyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerview);
+            var layoutManager = new PredictiveLinearLayoutManager(this);
+            var itemAnimator = new ItemAnimator();
+            var adapter = new ParentChildListAdapter(itemAnimator);
+            recyclerView.SetLayoutManager(layoutManager);
+            recyclerView.SetAdapter(adapter);
+            recyclerView.SetItemAnimator(itemAnimator);
+            adapter.CurrentNode = Category.CreateDummyCategories().ToRootTreeNodes()[0];
+            adapter.NotifyDataSetChanged();
         }
     }
 }

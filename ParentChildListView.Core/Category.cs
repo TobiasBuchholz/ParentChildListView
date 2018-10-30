@@ -17,6 +17,24 @@ namespace ParentChildListView.UI
             return $"[Category: Name={Name}]";
         }
 
+        public override bool Equals(object obj)
+        {
+            if(obj is Category other) {
+                return Equals(other);
+            }
+            return false;
+        }
+
+        private bool Equals(Category other)
+        {
+            return (ParentId, Id, Name).Equals((other.ParentId, other.Id, other.Name));
+        }
+
+        public override int GetHashCode()
+        {
+            return (ParentId, Id, Name).GetHashCode();
+        }
+
         public long ParentId { get; }
         public long Id { get; }
         public string Name { get; }
