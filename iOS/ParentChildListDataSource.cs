@@ -13,16 +13,6 @@ namespace ParentChildListView.UI.iOS
         private TreeNode<Category> _currentNode;
         private int _itemsCount;
         
-        public override nint GetItemsCount(UICollectionView collectionView, nint section)
-        {
-            return _itemsCount;
-        }
-
-        public override nint NumberOfSections(UICollectionView collectionView)
-        {
-            return 1;
-        }
-
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
             var cell = (CategoryCell) collectionView.DequeueReusableCell(CategoryCell.CellIdentifier, indexPath);
@@ -75,8 +65,8 @@ namespace ParentChildListView.UI.iOS
         private void SetCurrentNodeWithAnimation(UICollectionView collectionView, NSIndexPath indexPath, TreeNode<Category> selectedNode)
         {
             var diffResult = _currentNode.CalculateDiff(selectedNode);
-            var previousNodeFlattened = _currentNode.Flatten().ToList();
-            var movingIndexes = diffResult.MovingIndexes.ToList();
+            var previousNodeFlattened = _currentNode.Flatten().ToArray();
+            var movingIndexes = diffResult.MovingIndexes.ToArray();
             
             foreach(var i in movingIndexes) {
                 var previousNode = previousNodeFlattened[i];
@@ -118,6 +108,16 @@ namespace ParentChildListView.UI.iOS
                 _itemsCount += indexes.Count;
                 collectionView.InsertItems(indexes.ToNSIndexPaths().ToArray());
             });
+        }
+        
+        public override nint GetItemsCount(UICollectionView collectionView, nint section)
+        {
+            return _itemsCount;
+        }
+
+        public override nint NumberOfSections(UICollectionView collectionView)
+        {
+            return 1;
         }
 
         public TreeNode<Category> CurrentNode {
