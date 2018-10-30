@@ -20,29 +20,28 @@ namespace ParentChildListView.UI.iOS
             base.ViewDidLoad();
 
             var layout = CreateCollectionViewLayout();
-            var dataSource = new ParentChildListDataSource();
             var collectionView = new UICollectionView(CGRect.Empty, layout);
-            var collectionViewDelegate = new ParentChildListCollectionViewDelegate(collectionView);
+            var dataSource = new CategoriesDataSource();
+            var collectionViewDelegate = new MyCollectionViewDelegate(collectionView);
             collectionView.TranslatesAutoresizingMaskIntoConstraints = false;
             collectionView.RegisterClassForCell(typeof(CategoryCell), CategoryCell.CellIdentifier);
             collectionView.BackgroundColor = UIColor.DarkGray;
             collectionView.DataSource = dataSource;
             collectionView.Delegate = collectionViewDelegate;
             dataSource.CurrentNode = Category.CreateDummyCategories().ToRootTreeNodes()[0];
-//            dataSource.Items = Category.CreateDummyCategories().ToList();
-            
             View.AddSubview(collectionView);
 
             collectionView.LeadingAnchor.ConstraintEqualTo(View.LeadingAnchor).Active = true;
             collectionView.TrailingAnchor.ConstraintEqualTo(View.TrailingAnchor).Active = true;
             collectionView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
             collectionView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
-            
-            collectionViewDelegate.OnItemSelected += CollectionViewDelegateOnOnItemSelected;
+
+            collectionViewDelegate.OnItemSelected += (s, e) => CollectionViewDelegateOnOnItemSelected(e, dataSource);
         }
 
-        private void CollectionViewDelegateOnOnItemSelected(object sender, ItemSelectedEventArgs e)
+        private void CollectionViewDelegateOnOnItemSelected(ItemSelectedEventArgs e, CategoriesDataSource dataSource)
         {
+            dataSource.ItemSelected(e.CollectionView, e.IndexPath);
             System.Diagnostics.Debug.WriteLine($"tap");
         }
 

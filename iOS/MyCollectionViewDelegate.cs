@@ -1,11 +1,12 @@
 using System;
 using Foundation;
+using ParentChildListView.Core.TreeNodes;
 using ParentChildListView.UI.iOS.EventArgs;
 using UIKit;
 
 namespace ParentChildListView.UI.iOS
 {
-	public class ParentChildListCollectionViewDelegate : UICollectionViewDelegate
+	public class MyCollectionViewDelegate : UICollectionViewDelegate 
 	{
 		public event EventHandler OnScrolled;
 		public event EventHandler OnDecelerationEnded;
@@ -13,9 +14,9 @@ namespace ParentChildListView.UI.iOS
 		public event EventHandler<ItemSelectedEventArgs> OnItemSelected;
 		public event EventHandler<ItemLongPressedEventArgs> OnItemLongPressed;
 
-		public ParentChildListCollectionViewDelegate(UICollectionView collectionView)
+		public MyCollectionViewDelegate(UICollectionView collectionView)
 		{
-			collectionView.AddItemLongClickListener(cell => OnItemLongPressed?.Invoke(collectionView, new ItemLongPressedEventArgs { Cell = cell }));
+			collectionView.AddItemLongClickListener(cell => OnItemLongPressed?.Invoke(collectionView, new ItemLongPressedEventArgs(cell)));
 		}
 
 		public override void Scrolled(UIScrollView scrollView)
@@ -30,10 +31,7 @@ namespace ParentChildListView.UI.iOS
 
 		public override void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			OnItemSelected?.Invoke(collectionView, new ItemSelectedEventArgs { IndexPath = indexPath });
-			
-			var dataSource = (ParentChildListDataSource) collectionView.DataSource;
-			dataSource.ItemSelected(collectionView, indexPath);
+			OnItemSelected?.Invoke(collectionView, new ItemSelectedEventArgs(collectionView, indexPath));
 		}
 
         public override void WillDisplayCell(UICollectionView collectionView, UICollectionViewCell cell, NSIndexPath indexPath)

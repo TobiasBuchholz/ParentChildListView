@@ -100,15 +100,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseCollectionViewSource.cs" />
+    <Compile Include="CategoriesDataSource.cs" />
     <Compile Include="ParentChildCollectionViewFlowLayout.cs" />
-    <Compile Include="ParentChildListDataSource.cs" />
+    <Compile Include="ParentChildListDataSourceDelegate.cs" />
     <Compile Include="CategoryCell.cs" />
     <Compile Include="EventArgs\ItemLongPressedEventArgs.cs" />
     <Compile Include="EventArgs\ItemSelectedEventArgs.cs" />
     <Compile Include="EventArgs\SectionSelectedEventArgs.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="ParentChildListCollectionViewDelegate.cs" />
+    <Compile Include="MyCollectionViewDelegate.cs" />
     <Compile Include="UIKit\UICollectionViewExtensions.cs" />
     <Compile Include="UIKit\UIViewExtensions.cs" />
     <Compile Include="ViewController.cs" />

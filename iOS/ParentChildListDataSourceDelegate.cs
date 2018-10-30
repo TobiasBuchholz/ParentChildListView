@@ -9,19 +9,21 @@ using UIKit;
 
 namespace ParentChildListView.UI.iOS
 {
-    public sealed class ParentChildListDataSource : UICollectionViewDataSource
+    public class ParentChildListDataSourceDelegate<T> where T : ITreeNodeData
     {
-        private TreeNode<Category> _currentNode;
-        private int _itemsCount;
-        
-        public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
+        private readonly Func<UICollectionView, NSIndexPath, ParentChildItemState, T, UICollectionViewCell> _cellSelector;
+        private TreeNode<T> _currentNode;
+
+        public ParentChildListDataSourceDelegate(Func<UICollectionView, NSIndexPath, ParentChildItemState, T, UICollectionViewCell> cellSelector)
         {
-            var cell = (CategoryCell) collectionView.DequeueReusableCell(CategoryCell.CellIdentifier, indexPath);
+            _cellSelector = cellSelector;
+        }
+
+        public UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
+        {
             var state = GetStateForIndex(indexPath.Row);
             var data = GetDataForIndex(indexPath.Row, state);
-            cell.SetupCell(data);
-            cell.State = state;
-            return cell;
+            return _cellSelector(collectionView, indexPath, state, data);
         }
 
         private ParentChildItemState GetStateForIndex(int index)
@@ -35,7 +37,7 @@ namespace ParentChildListView.UI.iOS
             }
         }
         
-        private Category GetDataForIndex(int index, ParentChildItemState state)
+        private T GetDataForIndex(int index, ParentChildItemState state)
         {
             switch(state) {
                 case ParentChildItemState.Root:
@@ -63,7 +65,7 @@ namespace ParentChildListView.UI.iOS
             }
         }
 
-        private void SetCurrentNodeWithAnimation(UICollectionView collectionView, NSIndexPath indexPath, TreeNode<Category> selectedNode)
+        private void SetCurrentNodeWithAnimation(UICollectionView collectionView, NSIndexPath indexPath, TreeNode<T> selectedNode)
         {
             var diffResult = _currentNode.CalculateDiff(selectedNode);
             var previousNodeFlattened = _currentNode.Flatten().ToArray();
@@ -80,7 +82,7 @@ namespace ParentChildListView.UI.iOS
             AnimateDiffAsync(collectionView, diffResult).Ignore();
         }
 
-        private static ParentChildItemState GetStateForPreviousNode(TreeNode<Category> previousNode, TreeNode<Category> currentNode)
+        private static ParentChildItemState GetStateForPreviousNode(TreeNode<T> previousNode, TreeNode<T> currentNode)
         {
             if(previousNode.ParentNodes.Any()) {
                 return currentNode.ChildNodes.Contains(previousNode) ? ParentChildItemState.Child : ParentChildItemState.Parent;
@@ -98,7 +100,7 @@ namespace ParentChildListView.UI.iOS
         private async Task DeleteItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> indexes)
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
-                _itemsCount -= indexes.Count;
+                ItemsCount -= indexes.Count;
                 collectionView.DeleteItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
@@ -106,25 +108,18 @@ namespace ParentChildListView.UI.iOS
         private async Task InsertItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> indexes)
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
-                _itemsCount += indexes.Count;
+                ItemsCount += indexes.Count;
                 collectionView.InsertItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
         
-        public override nint GetItemsCount(UICollectionView collectionView, nint section)
-        {
-            return _itemsCount;
-        }
-
-        public override nint NumberOfSections(UICollectionView collectionView)
-        {
-            return 1;
-        }
-
-        public TreeNode<Category> CurrentNode {
+        public int ItemsCount { get; private set; }
+        public int NumberOfSections => 1;
+        
+        public TreeNode<T> CurrentNode {
             set {
                 _currentNode = value;
-                _itemsCount = value.ParentNodes.Count + value.ChildNodes.Count + 1;
+                ItemsCount = value.ParentNodes.Count + value.ChildNodes.Count + 1;
             }
         }
     }
