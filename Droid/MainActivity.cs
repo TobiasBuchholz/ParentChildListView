@@ -17,7 +17,7 @@ namespace ParentChildListView.UI.Droid
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerview);
             var layoutManager = new PredictiveLinearLayoutManager(this);
             var itemAnimator = new ItemAnimator();
-            var adapter = new ParentChildListAdapter(itemAnimator);
+            var adapter = new ParentChildListAdapter(recyclerView, itemAnimator);
             recyclerView.SetLayoutManager(layoutManager);
             recyclerView.SetAdapter(adapter);
             recyclerView.SetItemAnimator(itemAnimator);

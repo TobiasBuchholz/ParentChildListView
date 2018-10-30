@@ -14,15 +14,52 @@ namespace ParentChildListView.UI.Droid
 {
     public class ParentChildListAdapter : RecyclerView.Adapter
     {
+        private readonly RecyclerView _recyclerView;
         private readonly ItemAnimator _itemAnimator;
         private TreeNode<Category> _currentNode;
         private int _itemsCount;
 
-        public ParentChildListAdapter(ItemAnimator itemAnimator)
+        public ParentChildListAdapter(
+            RecyclerView recyclerView,
+            ItemAnimator itemAnimator)
         {
+            _recyclerView = recyclerView;
             _itemAnimator = itemAnimator;
         }
 
+        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+        {
+            var viewHolder = (ParentChildListAdapterViewHolder) holder;
+            var state = GetStateForIndex(position);
+            var data = GetDataForIndex(position, state);
+            viewHolder.TitleLabel.Text = data.Name;
+            viewHolder.State = state;
+        }
+
+        private ParentChildItemState GetStateForIndex(int index)
+        {
+            if(index == 0) {
+                return ParentChildItemState.Root;
+            } else if(index < _currentNode.ParentNodes.Count) {
+                return ParentChildItemState.Parent;
+            } else {
+                return ParentChildItemState.Child;
+            }
+        }
+        
+        private Category GetDataForIndex(int index, ParentChildItemState state)
+        {
+            switch(state) {
+                case ParentChildItemState.Root:
+                    return _currentNode.ParentNodes.Any() ? _currentNode.ParentNodes.First().Data : _currentNode.Data;
+                case ParentChildItemState.Parent:
+                    return _currentNode.ParentNodes[index].Data;
+                case ParentChildItemState.Child:
+                    return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
+            }
+            throw new ArgumentException($"Couldn't get data for index {index}");
+        }
+        
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             var itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.item, parent, false);
@@ -37,20 +74,39 @@ namespace ParentChildListView.UI.Droid
             var parentNodesCount = parentNodes.Count;
 
             if(index == 0) {
-                SetCurrentNodeWithAnimation(_currentNode.ParentNodes.First(), index);
+                SetCurrentNodeWithAnimation(index, _currentNode.ParentNodes.First());
             } else if(index < parentNodesCount) {
-                SetCurrentNodeWithAnimation(parentNodes[index], index);
+                SetCurrentNodeWithAnimation(index, parentNodes[index]);
             } else if(index > parentNodesCount) {
-                SetCurrentNodeWithAnimation(_currentNode.ChildNodes[index - (parentNodesCount + 1)], index);
+                SetCurrentNodeWithAnimation(index, _currentNode.ChildNodes[index - (parentNodesCount + 1)]);
             }
         }
 
-        private void SetCurrentNodeWithAnimation(TreeNode<Category> selectedNode, int index)
+        private void SetCurrentNodeWithAnimation(int index, TreeNode<Category> selectedNode)
         {
             var diffResult = _currentNode.CalculateDiff(selectedNode);
-            _itemAnimator.DiffResult = diffResult;
+            var previousNodeFlattened = _currentNode.Flatten().ToArray();
+            var movingIndexes = diffResult.MovingIndexes.ToArray();
+
+            foreach(var i in movingIndexes) {
+                var previousNode = previousNodeFlattened[i];
+                var state = GetStateForPreviousNode(previousNode, selectedNode);
+                var viewHolder = (ParentChildListAdapterViewHolder) _recyclerView.FindViewHolderForLayoutPosition(i);
+                viewHolder.State = i == index && i > 0 ? ParentChildItemState.Selected : state;
+            }
+            
             _currentNode = selectedNode;
+            _itemAnimator.DiffResult = diffResult;
             AnimateDiffAsync(diffResult).Ignore();
+        }
+        
+        private static ParentChildItemState GetStateForPreviousNode(TreeNode<Category> previousNode, TreeNode<Category> currentNode)
+        {
+            if(previousNode.ParentNodes.Any()) {
+                return currentNode.ChildNodes.Contains(previousNode) ? ParentChildItemState.Child : ParentChildItemState.Parent;
+            } else {
+                return ParentChildItemState.Root;
+            }
         }
 
         private async Task AnimateDiffAsync(DiffResult diffResult)
@@ -99,57 +155,8 @@ namespace ParentChildListView.UI.Droid
                 NotifyItemRangeInserted(array.First(), array.Count());
             }
         }
-
-        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            var viewHolder = (ParentChildListAdapterViewHolder) holder;
-            var state = GetStateForIndex(position);
-            var data = GetDataForIndex(position, state);
-            viewHolder.TitleLabel.Text = data.Name;
-            viewHolder.TitleLabel.SetBackgroundColor(GetColorForState(state));
-        }
-
-        private ParentChildItemState GetStateForIndex(int index)
-        {
-            if(index == 0) {
-                return ParentChildItemState.Root;
-            } else if(index < _currentNode.ParentNodes.Count) {
-                return ParentChildItemState.Parent;
-            } else {
-                return ParentChildItemState.Child;
-            }
-        }
-        
-        private Category GetDataForIndex(int index, ParentChildItemState state)
-        {
-            switch(state) {
-                case ParentChildItemState.Root:
-                    return _currentNode.ParentNodes.Any() ? _currentNode.ParentNodes.First().Data : _currentNode.Data;
-                case ParentChildItemState.Parent:
-                    return _currentNode.ParentNodes[index].Data;
-                case ParentChildItemState.Child:
-                    return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
-            }
-            throw new ArgumentException($"Couldn't get data for index {index}");
-        }
-        
-        private Color GetColorForState(ParentChildItemState state)
-        {
-            switch(state) {
-                case ParentChildItemState.Root:
-                    return Color.Blue;
-                case ParentChildItemState.Parent:
-                    return Color.Purple;
-                case ParentChildItemState.Child:
-                    return Color.Orange;
-                case ParentChildItemState.Selected:
-                    return Color.Red;
-            }
-            throw new ArgumentException($"Can't get color for unknown state {state}");
-        }
         
         public event EventHandler<int> ItemSelected;
-
         public override int ItemCount => _itemsCount;
 
         public TreeNode<Category> CurrentNode {
@@ -175,5 +182,25 @@ namespace ParentChildListView.UI.Droid
         }
 
         public TextView TitleLabel { get; }
+
+        public ParentChildItemState State {
+            set => TitleLabel.SetBackgroundColor(GetColorForState(value));
+        }
+        
+        private Color GetColorForState(ParentChildItemState state)
+        {
+            switch(state) {
+                case ParentChildItemState.Root:
+                    return Color.Blue;
+                case ParentChildItemState.Parent:
+                    return Color.Purple;
+                case ParentChildItemState.Child:
+                    return Color.Orange;
+                case ParentChildItemState.Selected:
+                    return Color.Red;
+            }
+            throw new ArgumentException($"Can't get color for unknown state {state}");
+        }
+        
     }
 }
