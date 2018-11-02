@@ -12,11 +12,15 @@ namespace ParentChildListView.UI.iOS
     public class ParentChildListDataSourceDelegate<T> where T : ITreeNodeData
     {
         private readonly Func<UICollectionView, NSIndexPath, ParentChildItemState, T, UICollectionViewCell> _cellSelector;
+        private readonly Action<UICollectionViewCell, ParentChildItemState> _itemStateChanged;
         private TreeNode<T> _currentNode;
 
-        public ParentChildListDataSourceDelegate(Func<UICollectionView, NSIndexPath, ParentChildItemState, T, UICollectionViewCell> cellSelector)
+        public ParentChildListDataSourceDelegate(
+            Func<UICollectionView, NSIndexPath, ParentChildItemState, T, UICollectionViewCell> cellSelector,
+            Action<UICollectionViewCell, ParentChildItemState> itemStateChanged)
         {
             _cellSelector = cellSelector;
+            _itemStateChanged = itemStateChanged;
         }
 
         public UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
@@ -73,9 +77,9 @@ namespace ParentChildListView.UI.iOS
             
             foreach(var i in movingIndexes) {
                 var previousNode = previousNodeFlattened[i];
-                var state = GetStateForPreviousNode(previousNode, selectedNode);
-                var cell = (CategoryCell) collectionView.CellForItem(NSIndexPath.FromRowSection(i, 0));
-                cell.State = i == indexPath.Row && i > 0 ? ParentChildItemState.Selected : state;
+                var cell = collectionView.CellForItem(NSIndexPath.FromRowSection(i, 0));
+                var state = i == indexPath.Row && i > 0 ? ParentChildItemState.Selected : GetStateForPreviousNode(previousNodeFlattened[i], selectedNode);
+                _itemStateChanged(cell, state);
             }
             
             _currentNode = selectedNode;

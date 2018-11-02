@@ -66,11 +66,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatorListener.cs" />
+    <Compile Include="CategoriesAdapter.cs" />
     <Compile Include="IndexDiffUtilCallback.cs" />
     <Compile Include="IndexedItemHolderInfo.cs" />
     <Compile Include="ItemAnimator.cs" />
     <Compile Include="MainActivity.cs" />
-    <Compile Include="ParentChildListAdapter.cs" />
+    <Compile Include="ParentChildListAdapterDelegate.cs" />
     <Compile Include="PredictiveLinearLayoutManager.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,7 +12,7 @@ namespace ParentChildListView.UI.iOS
         
         public CategoriesDataSource() 
         {
-            _delegate = new ParentChildListDataSourceDelegate<Category>(GetCell);
+            _delegate = new ParentChildListDataSourceDelegate<Category>(GetCell, HandleItemStateChanged);
         }
 
         private static UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath, ParentChildItemState state, Category category)
@@ -21,6 +21,12 @@ namespace ParentChildListView.UI.iOS
             cell.SetupCell(category);
             cell.State = state;
             return cell;
+        }
+        
+        private static void HandleItemStateChanged(UICollectionViewCell collectionViewCell, ParentChildItemState state)
+        {
+            var cell = (CategoryCell) collectionViewCell;
+            cell.State = state;
         }
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)

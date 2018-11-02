@@ -17,11 +17,9 @@ namespace ParentChildListView.UI.Droid
 
             var recyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerview);
             var layoutManager = new PredictiveLinearLayoutManager(this);
-            var itemAnimator = new ItemAnimator();
-            var adapter = new ParentChildListAdapter(recyclerView, itemAnimator);
+            var adapter = new CategoriesAdapter(recyclerView);
             recyclerView.SetLayoutManager(layoutManager);
             recyclerView.SetAdapter(adapter);
-            recyclerView.SetItemAnimator(itemAnimator);
             adapter.CurrentNode = Category.CreateDummyCategories().ToRootTreeNodes()[0];
             adapter.NotifyDataSetChanged();
         }
