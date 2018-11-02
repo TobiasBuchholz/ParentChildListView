@@ -51,23 +51,21 @@ namespace ParentChildListView.UI.iOS
             _label.Text = category.Name;
         }
 
-        public ParentChildItemState State {
+        public ItemRelation Relation {
             set => BackgroundView.BackgroundColor = GetColorForState(value);
         }
 
-        private UIColor GetColorForState(ParentChildItemState state)
+        private UIColor GetColorForState(ItemRelation relation)
         {
-            switch(state) {
-                case ParentChildItemState.Root:
-                    return UIColor.Blue;
-                case ParentChildItemState.Parent:
-                    return UIColor.Purple;
-                case ParentChildItemState.Child:
+            switch(relation.Type) {
+                case ItemRelationType.Parent:
+                    return relation.Level == 0 ? UIColor.Blue : UIColor.Purple;
+                case ItemRelationType.Child:
                     return UIColor.Orange;
-                case ParentChildItemState.Selected:
+                case ItemRelationType.Selected:
                     return UIColor.Red;
             }
-            throw new ArgumentException($"Can't get color for unknown state {state}");
+            throw new ArgumentException($"Can't get color for unknown state {relation}");
         }
     }
 }

@@ -17,16 +17,16 @@ namespace ParentChildListView.UI.Droid
     {
         private readonly RecyclerView _recyclerView;
         private readonly Func<ViewGroup, int, RecyclerView.ViewHolder> _viewHolderSelector;
-        private readonly Action<RecyclerView.ViewHolder, ParentChildItemState, T> _viewHolderBound;
-        private readonly Action<RecyclerView.ViewHolder, ParentChildItemState> _itemStateChanged;
+        private readonly Action<RecyclerView.ViewHolder, ItemRelation, T> _viewHolderBound;
+        private readonly Action<RecyclerView.ViewHolder, ItemRelation> _itemStateChanged;
         private readonly ItemAnimator _itemAnimator;
         private TreeNode<T> _currentNode;
 
         public ParentChildListAdapterDelegate(
             RecyclerView recyclerView,
             Func<ViewGroup, int, RecyclerView.ViewHolder> viewHolderSelector,
-            Action<RecyclerView.ViewHolder, ParentChildItemState, T> viewHolderBound,
-            Action<RecyclerView.ViewHolder, ParentChildItemState> itemStateChanged)
+            Action<RecyclerView.ViewHolder, ItemRelation, T> viewHolderBound,
+            Action<RecyclerView.ViewHolder, ItemRelation> itemStateChanged)
         {
             _recyclerView = recyclerView;
             _viewHolderSelector = viewHolderSelector;
@@ -38,30 +38,24 @@ namespace ParentChildListView.UI.Droid
 
         public void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var state = GetStateForIndex(position);
-            var data = GetDataForIndex(position, state);
-            _viewHolderBound(holder, state, data);
+            var relation = GetRelationForIndex(position);
+            var data = GetDataForIndex(position, relation);
+            _viewHolderBound(holder, relation, data);
         }
 
-        private ParentChildItemState GetStateForIndex(int index)
+        private ItemRelation GetRelationForIndex(int index)
         {
-            if(index == 0) {
-                return ParentChildItemState.Root;
-            } else if(index < _currentNode.ParentNodes.Count) {
-                return ParentChildItemState.Parent;
-            } else {
-                return ParentChildItemState.Child;
-            }
+            return index == 0 || index < _currentNode.ParentNodes.Count 
+                ? ItemRelation.AsParent(_currentNode) 
+                : ItemRelation.AsChild(_currentNode);
         }
-        
-        private T GetDataForIndex(int index, ParentChildItemState state)
+
+        private T GetDataForIndex(int index, ItemRelation relation)
         {
-            switch(state) {
-                case ParentChildItemState.Root:
-                    return _currentNode.ParentNodes.Any() ? _currentNode.ParentNodes.First().Data : _currentNode.Data;
-                case ParentChildItemState.Parent:
-                    return _currentNode.ParentNodes[index].Data;
-                case ParentChildItemState.Child:
+            switch(relation.Type) {
+                case ItemRelationType.Parent:
+                    return relation.Level == 0 ? _currentNode.Data : _currentNode.ParentNodes[index].Data;
+                case ItemRelationType.Child:
                     return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
             }
             throw new ArgumentException($"Couldn't get data for index {index}");
@@ -94,8 +88,8 @@ namespace ParentChildListView.UI.Droid
 
             foreach(var i in movingIndexes) {
                 var viewHolder = _recyclerView.FindViewHolderForLayoutPosition(i);
-                var state = i == index && i > 0 ? ParentChildItemState.Selected : GetStateForPreviousNode(previousNodeFlattened[i], selectedNode);
-                _itemStateChanged(viewHolder, state);
+                var relation = i == index && i > 0 ? ItemRelation.AsSelected(selectedNode) : GetStateForPreviousNode(previousNodeFlattened[i], selectedNode);
+                _itemStateChanged(viewHolder, relation);
             }
             
             _currentNode = selectedNode;
@@ -103,13 +97,11 @@ namespace ParentChildListView.UI.Droid
             AnimateDiffAsync(diffResult).Ignore();
         }
         
-        private static ParentChildItemState GetStateForPreviousNode(TreeNode<T> previousNode, TreeNode<T> currentNode)
+        private static ItemRelation GetStateForPreviousNode(TreeNode<T> previousNode, TreeNode<T> currentNode)
         {
-            if(previousNode.ParentNodes.Any()) {
-                return currentNode.ChildNodes.Contains(previousNode) ? ParentChildItemState.Child : ParentChildItemState.Parent;
-            } else {
-                return ParentChildItemState.Root;
-            }
+            return currentNode.ChildNodes.Contains(previousNode)
+                ? ItemRelation.AsChild(previousNode)
+                : ItemRelation.AsParent(previousNode);
         }
 
         private async Task AnimateDiffAsync(DiffResult diffResult)

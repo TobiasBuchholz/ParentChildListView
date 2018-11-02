@@ -15,18 +15,18 @@ namespace ParentChildListView.UI.iOS
             _delegate = new ParentChildListDataSourceDelegate<Category>(GetCell, HandleItemStateChanged);
         }
 
-        private static UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath, ParentChildItemState state, Category category)
+        private static UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath, ItemRelation relation, Category category)
         {
             var cell = (CategoryCell) collectionView.DequeueReusableCell(CategoryCell.CellIdentifier, indexPath);
             cell.SetupCell(category);
-            cell.State = state;
+            cell.Relation = relation;
             return cell;
         }
         
-        private static void HandleItemStateChanged(UICollectionViewCell collectionViewCell, ParentChildItemState state)
+        private static void HandleItemStateChanged(UICollectionViewCell collectionViewCell, ItemRelation relation)
         {
             var cell = (CategoryCell) collectionViewCell;
-            cell.State = state;
+            cell.Relation = relation;
         }
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)

@@ -34,17 +34,17 @@ namespace ParentChildListView.UI.Droid
             _delegate.OnItemSelected(index);    
         }
 
-        private static void HandleViewHolderBound(RecyclerView.ViewHolder holder, ParentChildItemState state, Category category)
+        private static void HandleViewHolderBound(RecyclerView.ViewHolder holder, ItemRelation relation, Category category)
         {
             var viewHolder = (CategoriesAdapterViewHolder) holder;
             viewHolder.TitleLabel.Text = category.Name;
-            viewHolder.State = state;
+            viewHolder.Relation = relation;
         }
 
-        private static void HandleItemStateChanged(RecyclerView.ViewHolder holder, ParentChildItemState state)
+        private static void HandleItemStateChanged(RecyclerView.ViewHolder holder, ItemRelation relation)
         {
             var viewHolder = (CategoriesAdapterViewHolder) holder;
-            viewHolder.State = state;
+            viewHolder.Relation = relation;
         }
         
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -81,23 +81,21 @@ namespace ParentChildListView.UI.Droid
 
         public TextView TitleLabel { get; }
 
-        public ParentChildItemState State {
+        public ItemRelation Relation {
             set => TitleLabel.SetBackgroundColor(GetColorForState(value));
         }
         
-        private Color GetColorForState(ParentChildItemState state)
+        private static Color GetColorForState(ItemRelation relation)
         {
-            switch(state) {
-                case ParentChildItemState.Root:
-                    return Color.Blue;
-                case ParentChildItemState.Parent:
-                    return Color.Purple;
-                case ParentChildItemState.Child:
+            switch(relation.Type) {
+                case ItemRelationType.Parent:
+                    return relation.Level == 0 ? Color.Blue : Color.Purple;
+                case ItemRelationType.Child:
                     return Color.Orange;
-                case ParentChildItemState.Selected:
+                case ItemRelationType.Selected:
                     return Color.Red;
             }
-            throw new ArgumentException($"Can't get color for unknown state {state}");
+            throw new ArgumentException($"Can't get color for unknown state {relation}");
         }
     }
 }
