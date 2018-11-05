@@ -71,7 +71,7 @@ namespace ParentChildListView.UI.Droid
             var parentNodes = _currentNode.ParentNodes;
             var parentNodesCount = parentNodes.Count;
 
-            if(index == 0) {
+            if(index == 0 && _currentNode.ParentNodes.Any()) {
                 SetCurrentNodeWithAnimation(index, _currentNode.ParentNodes.First());
             } else if(index < parentNodesCount) {
                 SetCurrentNodeWithAnimation(index, parentNodes[index]);

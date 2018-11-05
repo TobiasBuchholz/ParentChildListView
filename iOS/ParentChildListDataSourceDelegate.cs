@@ -57,7 +57,7 @@ namespace ParentChildListView.UI.iOS
             var parentNodesCount = parentNodes.Count;
             var index = indexPath.Row;
 
-            if(index == 0) {
+            if(index == 0 && _currentNode.ParentNodes.Any()) {
                 SetCurrentNodeWithAnimation(collectionView, indexPath, _currentNode.ParentNodes.First());
             } else if(index < parentNodesCount) {
                 SetCurrentNodeWithAnimation(collectionView, indexPath, parentNodes[index]);
