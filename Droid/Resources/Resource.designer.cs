@@ -163,6 +163,9 @@ namespace ParentChildListView.UI.Droid
 			// aapt resource value: 0x7f050002
 			public const int fastscroll_minimum_range = 2131034114;
 			
+			// aapt resource value: 0x7f05001a
+			public const int height_category_item = 2131034138;
+			
 			// aapt resource value: 0x7f050003
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131034115;
 			

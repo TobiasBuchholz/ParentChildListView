@@ -2,12 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Android.Graphics;
-using Android.Runtime;
 using Android.Support.V7.Util;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Android.Widget;
 using ParentChildListView.Core;
 using ParentChildListView.Core.TreeNodes;
 
@@ -15,6 +12,7 @@ namespace ParentChildListView.UI.Droid
 {
     public sealed class ParentChildListAdapterDelegate<T> where T : ITreeNodeData
     {
+        private readonly int _itemHeight;
         private readonly RecyclerView _recyclerView;
         private readonly Func<ViewGroup, int, RecyclerView.ViewHolder> _viewHolderSelector;
         private readonly Action<RecyclerView.ViewHolder, ItemRelation, T> _viewHolderBound;
@@ -23,11 +21,13 @@ namespace ParentChildListView.UI.Droid
         private TreeNode<T> _currentNode;
 
         public ParentChildListAdapterDelegate(
+            int itemHeight,
             RecyclerView recyclerView,
             Func<ViewGroup, int, RecyclerView.ViewHolder> viewHolderSelector,
             Action<RecyclerView.ViewHolder, ItemRelation, T> viewHolderBound,
             Action<RecyclerView.ViewHolder, ItemRelation> itemStateChanged)
         {
+            _itemHeight = itemHeight;
             _recyclerView = recyclerView;
             _viewHolderSelector = viewHolderSelector;
             _viewHolderBound = viewHolderBound;
@@ -125,9 +125,15 @@ namespace ParentChildListView.UI.Droid
             var adapterDiff = DiffUtil.CalculateDiff(callback);
 
             ItemCount = newIndexes.Length;
+            InvokeHeightWillChange();
 
             adapterDiff.DispatchUpdatesTo(_recyclerView.GetAdapter());
             return Task.Delay(TimeSpan.FromMilliseconds(300));
+        }
+
+        private void InvokeHeightWillChange()
+        {
+            HeightWillChange?.Invoke(this, ItemCount * _itemHeight);
         }
 
         private Task InsertItemsIfNeededAsync(IReadOnlyCollection<int> indexes)
@@ -138,6 +144,7 @@ namespace ParentChildListView.UI.Droid
         private Task InsertItemsAsync(IReadOnlyCollection<int> indexes)
         {
             ItemCount += indexes.Count;
+            InvokeHeightWillChange();
             NotifyItemsInserted(indexes);
             return Task.Delay(TimeSpan.FromMilliseconds(300));
         }
@@ -157,7 +164,10 @@ namespace ParentChildListView.UI.Droid
             set {
                 _currentNode = value;
                 ItemCount = value.ParentNodes.Count + value.ChildNodes.Count + 1;
+                InvokeHeightWillChange();
             }
         }
+
+        public event EventHandler<int> HeightWillChange;
     }
 }

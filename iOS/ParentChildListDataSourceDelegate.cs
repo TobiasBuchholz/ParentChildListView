@@ -11,14 +11,17 @@ namespace ParentChildListView.UI.iOS
 {
     public class ParentChildListDataSourceDelegate<T> where T : ITreeNodeData
     {
+        private readonly nfloat _cellHeight;
         private readonly Func<UICollectionView, NSIndexPath, ItemRelation, T, UICollectionViewCell> _cellSelector;
         private readonly Action<UICollectionViewCell, ItemRelation> _itemStateChanged;
         private TreeNode<T> _currentNode;
 
         public ParentChildListDataSourceDelegate(
+            nfloat cellHeight,
             Func<UICollectionView, NSIndexPath, ItemRelation, T, UICollectionViewCell> cellSelector,
             Action<UICollectionViewCell, ItemRelation> itemStateChanged)
         {
+            _cellHeight = cellHeight;
             _cellSelector = cellSelector;
             _itemStateChanged = itemStateChanged;
         }
@@ -97,14 +100,21 @@ namespace ParentChildListView.UI.iOS
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
                 ItemsCount -= indexes.Count;
+                InvokeHeightWillChange();
                 collectionView.DeleteItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
-        
+
+        private void InvokeHeightWillChange()
+        {
+            HeightWillChange?.Invoke(this, ItemsCount * _cellHeight);
+        }
+
         private async Task InsertItemsAsync(UICollectionView collectionView, IReadOnlyCollection<int> indexes)
         {
             await collectionView.PerformBatchUpdatesAsync(() => {
                 ItemsCount += indexes.Count;
+                InvokeHeightWillChange();
                 collectionView.InsertItems(indexes.ToNSIndexPaths().ToArray());
             });
         }
@@ -116,7 +126,10 @@ namespace ParentChildListView.UI.iOS
             set {
                 _currentNode = value;
                 ItemsCount = value.ParentNodes.Count + value.ChildNodes.Count + 1;
+                InvokeHeightWillChange();
             }
         }
+
+        public event EventHandler<nfloat> HeightWillChange;
     }
 }

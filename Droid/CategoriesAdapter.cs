@@ -16,6 +16,7 @@ namespace ParentChildListView.UI.Droid
         public CategoriesAdapter(RecyclerView recyclerView)
         {
             _delegate = new ParentChildListAdapterDelegate<Category>(
+                recyclerView.Context.Resources.GetDimensionPixelSize(Resource.Dimension.height_category_item),
                 recyclerView,
                 SelectViewHolder,
                 HandleViewHolderBound,
@@ -63,6 +64,11 @@ namespace ParentChildListView.UI.Droid
         public TreeNode<Category> CurrentNode {
             set => _delegate.CurrentNode = value;
         }
+        
+        public event EventHandler<int> HeightWillChange {
+            add => _delegate.HeightWillChange += value;
+            remove => _delegate.HeightWillChange -= value;
+        }
     }
     
     public sealed class CategoriesAdapterViewHolder : RecyclerView.ViewHolder
@@ -96,6 +102,6 @@ namespace ParentChildListView.UI.Droid
                     return Color.Red;
             }
             throw new ArgumentException($"Can't get color for unknown state {relation}");
-        }
+        } 
     }
 }

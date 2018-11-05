@@ -10,9 +10,9 @@ namespace ParentChildListView.UI.iOS
     {
         private readonly ParentChildListDataSourceDelegate<Category> _delegate;
         
-        public CategoriesDataSource() 
+        public CategoriesDataSource(nfloat cellHeight) 
         {
-            _delegate = new ParentChildListDataSourceDelegate<Category>(GetCell, HandleItemStateChanged);
+            _delegate = new ParentChildListDataSourceDelegate<Category>(cellHeight, GetCell, HandleItemStateChanged);
         }
 
         private static UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath, ItemRelation relation, Category category)
@@ -51,6 +51,11 @@ namespace ParentChildListView.UI.iOS
 
         public TreeNode<Category> CurrentNode {
             set => _delegate.CurrentNode = value;
+        }
+        
+        public event EventHandler<nfloat> HeightWillChange {
+            add => _delegate.HeightWillChange += value;
+            remove => _delegate.HeightWillChange -= value;
         }
     }
 }
