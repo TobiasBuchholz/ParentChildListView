@@ -55,6 +55,7 @@ namespace ParentChildListView.Core.TreeNodes
         public T Data { get; }
         public long Id => Data.Id;
         public long ParentId => Data.ParentId;
+        public bool IsRoot => !_parentNodes.Any();
         public IReadOnlyList<TreeNode<T>> ChildNodes => _childNodes.AsReadOnly();
         public IReadOnlyList<TreeNode<T>> ParentNodes => _parentNodes.AsReadOnly();
     }

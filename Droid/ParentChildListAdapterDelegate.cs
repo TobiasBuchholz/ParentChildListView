@@ -45,18 +45,27 @@ namespace ParentChildListView.UI.Droid
 
         private ItemRelation GetRelationForIndex(int index)
         {
-            return index == 0 || index < _currentNode.ParentNodes.Count 
-                ? ItemRelation.AsParent(_currentNode) 
-                : ItemRelation.AsChild(_currentNode);
+            if (index == 0) {
+                return ItemRelation.AsParent(_currentNode.IsRoot ? _currentNode : _currentNode.ParentNodes.First());
+            } else if(index < _currentNode.ParentNodes.Count) {
+                return ItemRelation.AsParent(_currentNode.ParentNodes[index]);
+            } else if (index == _currentNode.ParentNodes.Count) {
+                return ItemRelation.AsSelected(_currentNode);
+            } else {
+                return ItemRelation.AsChild(_currentNode);
+            }
         }
 
         private T GetDataForIndex(int index, ItemRelation relation)
         {
-            switch(relation.Type) {
-                case ItemRelationType.Parent:
-                    return relation.Level == 0 ? _currentNode.Data : _currentNode.ParentNodes[index].Data;
-                case ItemRelationType.Child:
-                    return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
+            if(relation.Level == 0) {
+                return _currentNode.IsRoot ? _currentNode.Data : _currentNode.ParentNodes.First().Data;
+            } else if(relation.Type == ItemRelationType.Parent) {
+                return _currentNode.ParentNodes[index].Data;
+            } else if(relation.Type == ItemRelationType.Selected) {
+                return _currentNode.Data;
+            } else if(relation.Type == ItemRelationType.Child) {
+                return _currentNode.ChildNodes[index - (_currentNode.ParentNodes.Count + 1)].Data;
             }
             throw new ArgumentException($"Couldn't get data for index {index}");
         }

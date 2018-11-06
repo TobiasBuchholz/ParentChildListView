@@ -166,6 +166,9 @@ namespace ParentChildListView.UI.Droid
 			// aapt resource value: 0x7f05001a
 			public const int height_category_item = 2131034138;
 			
+			// aapt resource value: 0x7f05001b
+			public const int height_flap = 2131034139;
+			
 			// aapt resource value: 0x7f050003
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131034115;
 			
@@ -282,20 +285,20 @@ namespace ParentChildListView.UI.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f06000e
-			public const int action_container = 2131099662;
+			// aapt resource value: 0x7f060013
+			public const int action_container = 2131099667;
 			
-			// aapt resource value: 0x7f06001a
-			public const int action_divider = 2131099674;
+			// aapt resource value: 0x7f06001f
+			public const int action_divider = 2131099679;
 			
-			// aapt resource value: 0x7f06000f
-			public const int action_image = 2131099663;
+			// aapt resource value: 0x7f060014
+			public const int action_image = 2131099668;
 			
-			// aapt resource value: 0x7f060010
-			public const int action_text = 2131099664;
+			// aapt resource value: 0x7f060015
+			public const int action_text = 2131099669;
 			
-			// aapt resource value: 0x7f06001b
-			public const int actions = 2131099675;
+			// aapt resource value: 0x7f060020
+			public const int actions = 2131099680;
 			
 			// aapt resource value: 0x7f060007
 			public const int async = 2131099655;
@@ -303,26 +306,44 @@ namespace ParentChildListView.UI.Droid
 			// aapt resource value: 0x7f060008
 			public const int blocking = 2131099656;
 			
-			// aapt resource value: 0x7f060019
-			public const int chronometer = 2131099673;
+			// aapt resource value: 0x7f06001e
+			public const int chronometer = 2131099678;
+			
+			// aapt resource value: 0x7f060012
+			public const int flap_view = 2131099666;
+			
+			// aapt resource value: 0x7f06000e
+			public const int flap_view_arrow_icon = 2131099662;
+			
+			// aapt resource value: 0x7f06000f
+			public const int flap_view_background = 2131099663;
+			
+			// aapt resource value: 0x7f06000d
+			public const int flap_view_flap_title = 2131099661;
+			
+			// aapt resource value: 0x7f06000c
+			public const int flap_view_flap_title_background = 2131099660;
+			
+			// aapt resource value: 0x7f060011
+			public const int flat_recyclerview = 2131099665;
 			
 			// aapt resource value: 0x7f060009
 			public const int forever = 2131099657;
 			
-			// aapt resource value: 0x7f060012
-			public const int icon = 2131099666;
+			// aapt resource value: 0x7f060017
+			public const int icon = 2131099671;
 			
-			// aapt resource value: 0x7f06001c
-			public const int icon_group = 2131099676;
+			// aapt resource value: 0x7f060021
+			public const int icon_group = 2131099681;
 			
-			// aapt resource value: 0x7f060015
-			public const int info = 2131099669;
+			// aapt resource value: 0x7f06001a
+			public const int info = 2131099674;
 			
 			// aapt resource value: 0x7f06000a
 			public const int italic = 2131099658;
 			
-			// aapt resource value: 0x7f06000c
-			public const int item_title_label = 2131099660;
+			// aapt resource value: 0x7f060010
+			public const int item_title_label = 2131099664;
 			
 			// aapt resource value: 0x7f060000
 			public const int item_touch_helper_previous_elevation = 2131099648;
@@ -336,23 +357,20 @@ namespace ParentChildListView.UI.Droid
 			// aapt resource value: 0x7f06000b
 			public const int normal = 2131099659;
 			
-			// aapt resource value: 0x7f060017
-			public const int notification_background = 2131099671;
+			// aapt resource value: 0x7f06001c
+			public const int notification_background = 2131099676;
 			
-			// aapt resource value: 0x7f060013
-			public const int notification_main_column = 2131099667;
-			
-			// aapt resource value: 0x7f060011
-			public const int notification_main_column_container = 2131099665;
-			
-			// aapt resource value: 0x7f06000d
-			public const int recyclerview = 2131099661;
+			// aapt resource value: 0x7f060018
+			public const int notification_main_column = 2131099672;
 			
 			// aapt resource value: 0x7f060016
-			public const int right_icon = 2131099670;
+			public const int notification_main_column_container = 2131099670;
 			
-			// aapt resource value: 0x7f060014
-			public const int right_side = 2131099668;
+			// aapt resource value: 0x7f06001b
+			public const int right_icon = 2131099675;
+			
+			// aapt resource value: 0x7f060019
+			public const int right_side = 2131099673;
 			
 			// aapt resource value: 0x7f060003
 			public const int tag_transition_group = 2131099651;
@@ -363,8 +381,8 @@ namespace ParentChildListView.UI.Droid
 			// aapt resource value: 0x7f060005
 			public const int text2 = 2131099653;
 			
-			// aapt resource value: 0x7f060018
-			public const int time = 2131099672;
+			// aapt resource value: 0x7f06001d
+			public const int time = 2131099677;
 			
 			// aapt resource value: 0x7f060006
 			public const int title = 2131099654;
@@ -399,28 +417,31 @@ namespace ParentChildListView.UI.Droid
 		{
 			
 			// aapt resource value: 0x7f040000
-			public const int item = 2130968576;
+			public const int flap_view = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int main = 2130968577;
+			public const int item = 2130968577;
 			
 			// aapt resource value: 0x7f040002
-			public const int notification_action = 2130968578;
+			public const int main = 2130968578;
 			
 			// aapt resource value: 0x7f040003
-			public const int notification_action_tombstone = 2130968579;
+			public const int notification_action = 2130968579;
 			
 			// aapt resource value: 0x7f040004
-			public const int notification_template_custom_big = 2130968580;
+			public const int notification_action_tombstone = 2130968580;
 			
 			// aapt resource value: 0x7f040005
-			public const int notification_template_icon_group = 2130968581;
+			public const int notification_template_custom_big = 2130968581;
 			
 			// aapt resource value: 0x7f040006
-			public const int notification_template_part_chronometer = 2130968582;
+			public const int notification_template_icon_group = 2130968582;
 			
 			// aapt resource value: 0x7f040007
-			public const int notification_template_part_time = 2130968583;
+			public const int notification_template_part_chronometer = 2130968583;
+			
+			// aapt resource value: 0x7f040008
+			public const int notification_template_part_time = 2130968584;
 			
 			static Layout()
 			{
