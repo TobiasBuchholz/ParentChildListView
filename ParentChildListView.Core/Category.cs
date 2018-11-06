@@ -62,5 +62,25 @@ namespace ParentChildListView.Core
             yield return new Category(16, 18, "Sub-Kicker 2");
             yield return new Category(16, 19, "Sub-Kicker 3");
         }
+
+        public static IEnumerable<Category> CreateFlatDummyCategories()
+        {
+            yield return new Category(-1, 0, "Alle Themen");
+            yield return new Category(0, 1, "Foobar");
+            yield return new Category(0, 2, "Foobar");
+            yield return new Category(0, 3, "Foobar");
+            yield return new Category(0, 4, "Foobar");
+            yield return new Category(0, 5, "Foobar");
+            yield return new Category(0, 6, "Foobar");
+            yield return new Category(0, 7, "Foobar");
+            yield return new Category(0, 8, "Foobar");
+            yield return new Category(0, 9, "Foobar");
+            yield return new Category(0, 10, "Foobar");
+            yield return new Category(0, 11, "Foobar");
+            yield return new Category(0, 12, "Foobar");
+            yield return new Category(0, 13, "Foobar");
+            yield return new Category(0, 14, "Foobar");
+            yield return new Category(0, 15, "Foobar");
+        }
     }
 }

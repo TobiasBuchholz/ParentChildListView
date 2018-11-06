@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="BaseCollectionViewSource.cs" />
     <Compile Include="CategoriesDataSource.cs" />
+    <Compile Include="FlapView.cs" />
     <Compile Include="ParentChildCollectionViewFlowLayout.cs" />
     <Compile Include="ParentChildListDataSourceDelegate.cs" />
     <Compile Include="CategoryCell.cs" />
