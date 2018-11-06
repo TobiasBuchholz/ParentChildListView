@@ -17,6 +17,7 @@ namespace ParentChildListView.UI.Droid
         private TextView _flapTitleView;
         private View _arrowIcon;
         private View _backgroundView;
+        private int _contentHeight;
 
         public FlapView(IntPtr javaReference, JniHandleOwnership transfer) 
             : base(javaReference, transfer)
@@ -77,7 +78,7 @@ namespace ParentChildListView.UI.Droid
 
         private void Open()
         {
-            this.SetHeight((int) (-_contentView.TranslationY + _flapHeight));
+            this.SetHeight(_contentHeight + _flapHeight);
             _backgroundView.Animate().Alpha(0.5f);
             _arrowIcon.Animate().Rotation(180f).SetInterpolator(_interpolator);
             Animate().Alpha(1f).SetDuration(100).SetStartDelay(0);
@@ -134,7 +135,8 @@ namespace ParentChildListView.UI.Droid
                 BringChildToFront(_flapTitleBackgroundView);
                 BringChildToFront(_flapTitleView);
                 BringChildToFront(_arrowIcon);
-                _contentView.TranslationY = -_contentView.GetMeasuredHeight() - _flapHeight;
+                _contentHeight = _contentView.GetMeasuredHeight();
+                _contentView.TranslationY = -_contentHeight - _flapHeight;
 
                 this.SetHeight(_flapHeight);
             }
