@@ -20,6 +20,7 @@ namespace ParentChildListView.UI.iOS
         public FlapView(nfloat contentHeight)
         {
             _contentHeight = contentHeight;
+            Alpha = 0.97f;
             
             InitHeightConstraint();
             InitBackgroundButton();
@@ -56,11 +57,12 @@ namespace ParentChildListView.UI.iOS
 
         private async Task CloseAsync()
         {
-            await AnimateAsync(0.3f, () => {
+            Animate(0.3f, () => _backgroundButton.Alpha = 0f);
+            await AnimateNotifyAsync(0.3f, 0f, UIViewAnimationOptions.CurveEaseOut, () => {
                 _contentView.Transform = CGAffineTransform.MakeTranslation(0, -_contentView.Frame.Height - FlapHeight);
-                _backgroundButton.Alpha = 0f;
                 _arrowIcon.Transform = CGAffineTransform.MakeRotation((nfloat) (-Math.PI * 2));
             });
+            Animate(0.5f, () => Alpha = 0.97f);
             _heightConstraint.Constant = FlapHeight;
         }
 
@@ -92,11 +94,13 @@ namespace ParentChildListView.UI.iOS
         private void Open()
         {
             _heightConstraint.Constant = _contentHeight + FlapHeight;
-            Animate(0.3f, () => {
+            
+            Animate(0.3f, () => _backgroundButton.Alpha = 1f);
+            Animate(0.1f, () => Alpha = 1f);
+            Animate(0.3f, 0f, UIViewAnimationOptions.CurveEaseIn ,() => {
                 _contentView.Transform = CGAffineTransform.MakeTranslation(0, 0);
-                _backgroundButton.Alpha = 1f;
                 _arrowIcon.Transform = CGAffineTransform.MakeRotation((nfloat) Math.PI);
-            });
+            }, null);
         }
         
         private void InitArrowIcon()

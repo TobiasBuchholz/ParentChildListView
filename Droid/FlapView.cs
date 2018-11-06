@@ -1,6 +1,7 @@
 using System;
 using Android.Content;
 using Android.Runtime;
+using Android.Support.V4.View.Animation;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -10,6 +11,7 @@ namespace ParentChildListView.UI.Droid
     public sealed class FlapView : RelativeLayout
     {
         private int _flapHeight;
+        private FastOutSlowInInterpolator _interpolator;
         private View _contentView;
         private View _flapTitleBackgroundView;
         private TextView _flapTitleView;
@@ -48,7 +50,9 @@ namespace ParentChildListView.UI.Droid
         private void Initialize(Context context)
         {
             _flapHeight = context.Resources.GetDimensionPixelSize(Resource.Dimension.height_flap);
+            _interpolator = new FastOutSlowInInterpolator();
             Inflate(context, Resource.Layout.flap_view, this);
+            Alpha = 0.97f;
 
             InitFlapTitleBackgroundView();
             InitFlapTitleView();
@@ -74,21 +78,25 @@ namespace ParentChildListView.UI.Droid
         private void Open()
         {
             this.SetHeight((int) (-_contentView.TranslationY + _flapHeight));
-            _arrowIcon.Animate().Rotation(180f);
             _backgroundView.Animate().Alpha(0.5f);
+            _arrowIcon.Animate().Rotation(180f).SetInterpolator(_interpolator);
+            Animate().Alpha(1f).SetDuration(100).SetStartDelay(0);
             _contentView
                 .Animate()
                 .TranslationY(0)
+                .SetInterpolator(_interpolator)
                 .SetListener(null);
         }
 
         public void Close()
         {
             _backgroundView.Animate().Alpha(0f);
-            _arrowIcon.Animate().Rotation(0f);
+            _arrowIcon.Animate().Rotation(0f).SetInterpolator(_interpolator);
+            Animate().Alpha(0.97f).SetDuration(500).SetStartDelay(300);
             _contentView
                 .Animate()
                 .TranslationY(-_contentView.Height - _flapHeight)
+                .SetInterpolator(_interpolator)
                 .SetListener(new AnimatorListener(onEndAction:_ => this.SetHeight(_flapHeight)));
         }
 
